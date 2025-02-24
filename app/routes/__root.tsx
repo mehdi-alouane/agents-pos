@@ -95,6 +95,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           >
             Users
           </Link>{' '}
+          <Link
+            to="/trips"
+            activeProps={{
+              className: 'font-bold',
+            }}
+          >
+            Trips
+          </Link>{' '}
      
         </div>
         <hr />

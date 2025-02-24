@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as UsersImport } from './routes/users'
+import { Route as TripsImport } from './routes/trips'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 
@@ -20,6 +21,12 @@ import { Route as IndexImport } from './routes/index'
 const UsersRoute = UsersImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TripsRoute = TripsImport.update({
+  id: '/trips',
+  path: '/trips',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -52,6 +59,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
+    '/trips': {
+      id: '/trips'
+      path: '/trips'
+      fullPath: '/trips'
+      preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
     '/users': {
       id: '/users'
       path: '/users'
@@ -67,12 +81,14 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/trips': typeof TripsRoute
   '/users': typeof UsersRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/trips': typeof TripsRoute
   '/users': typeof UsersRoute
 }
 
@@ -80,27 +96,30 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
+  '/trips': typeof TripsRoute
   '/users': typeof UsersRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/users'
+  fullPaths: '/' | '' | '/trips' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/users'
-  id: '__root__' | '/' | '/_layout' | '/users'
+  to: '/' | '' | '/trips' | '/users'
+  id: '__root__' | '/' | '/_layout' | '/trips' | '/users'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
+  TripsRoute: typeof TripsRoute
   UsersRoute: typeof UsersRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
+  TripsRoute: TripsRoute,
   UsersRoute: UsersRoute,
 }
 
@@ -116,6 +135,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_layout",
+        "/trips",
         "/users"
       ]
     },
@@ -124,6 +144,9 @@ export const routeTree = rootRoute
     },
     "/_layout": {
       "filePath": "_layout.tsx"
+    },
+    "/trips": {
+      "filePath": "trips.tsx"
     },
     "/users": {
       "filePath": "users.tsx"
