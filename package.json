@@ -9,6 +9,7 @@
     "start": "vinxi start"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.2",
     "@tanstack/react-router": "^1.111.6",
     "@tanstack/router-devtools": "^1.111.6",
     "@tanstack/start": "^1.111.6",
