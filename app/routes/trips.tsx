@@ -1,8 +1,4 @@
-"use client"
-
-import type React from "react"
-
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router"
 import axios from "redaxios"
 import { useState } from "react"
 import { format } from "date-fns"
@@ -19,6 +15,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../components/ui/pagination"
+import { BusTrip } from "types"
 
 // Format price to MAD currency
 const formatPrice = (price: number) => {
@@ -50,7 +47,7 @@ function RouteComponent() {
 
   // Filter trips based on search query
   const filteredTrips = trips?.filter(
-    (trip) =>
+    (trip: BusTrip) =>
       trip.price.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       trip.destinationCity.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trip.departureCity.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -113,19 +110,28 @@ function RouteComponent() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {currentTrips?.map((trip) => (
-          <Card key={trip.id}>
-            <CardContent className="p-4 space-y-2">
-              <p className="text-sm text-muted-foreground">From</p>
-              <p className="text-lg font-medium">{trip.departureCity}</p>
-              <p className="text-sm text-muted-foreground">To</p>
-              <p className="text-lg font-medium">{trip.destinationCity}</p>
-              <p className="text-sm text-muted-foreground">Date</p>
-              <p className="text-lg font-medium">{format(new Date(trip.departureDate), "EEEE, MMMM d, yyyy")}</p>
-              <p className="text-sm text-muted-foreground">Price</p>
-              <p className="text-lg font-medium text-primary">{formatPrice(trip.price)}</p>
-            </CardContent>
-          </Card>
+        {currentTrips?.map((trip: BusTrip) => (
+          <Link
+            to="/trips/$tripId"
+            params={{
+                tripId: String(trip.id)
+            }}
+            className="block transition-transform hover:scale-[1.02]"
+            key={trip.id}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4 space-y-2">
+                <p className="text-sm text-muted-foreground">From</p>
+                <p className="text-lg font-medium">{trip.departureCity}</p>
+                <p className="text-sm text-muted-foreground">To</p>
+                <p className="text-lg font-medium">{trip.destinationCity}</p>
+                <p className="text-sm text-muted-foreground">Date</p>
+                <p className="text-lg font-medium">{format(new Date(trip.departureDate), "EEEE, MMMM d, yyyy")}</p>
+                <p className="text-sm text-muted-foreground">Price</p>
+                <p className="text-lg font-medium text-primary">{formatPrice(trip.price)}</p>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
 
@@ -172,6 +178,8 @@ function RouteComponent() {
           Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} trips
         </div>
       )}
+
+      <Outlet />
     </div>
   )
 }
