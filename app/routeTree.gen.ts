@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as TripsImport } from './routes/trips'
+import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 import { Route as TripsTripIdImport } from './routes/trips.$tripId'
@@ -22,6 +23,12 @@ import { Route as TicketsTicketIdImport } from './routes/tickets.$ticketId'
 const TripsRoute = TripsImport.update({
   id: '/trips',
   path: '/trips',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -66,6 +73,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
     '/trips': {
       id: '/trips'
       path: '/trips'
@@ -105,6 +119,7 @@ const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
@@ -113,6 +128,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
@@ -122,6 +138,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
+  '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
@@ -129,13 +146,20 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/trips'
+    | '/tickets/$ticketId'
+    | '/trips/$tripId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
+  to: '/' | '' | '/login' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
   id:
     | '__root__'
     | '/'
     | '/_layout'
+    | '/login'
     | '/trips'
     | '/tickets/$ticketId'
     | '/trips/$tripId'
@@ -145,6 +169,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
+  LoginRoute: typeof LoginRoute
   TripsRoute: typeof TripsRouteWithChildren
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
 }
@@ -152,6 +177,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
+  LoginRoute: LoginRoute,
   TripsRoute: TripsRouteWithChildren,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
 }
@@ -168,6 +194,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_layout",
+        "/login",
         "/trips",
         "/tickets/$ticketId"
       ]
@@ -177,6 +204,9 @@ export const routeTree = rootRoute
     },
     "/_layout": {
       "filePath": "_layout.tsx"
+    },
+    "/login": {
+      "filePath": "login.tsx"
     },
     "/trips": {
       "filePath": "trips.tsx",
