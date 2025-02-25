@@ -15,6 +15,13 @@ interface CreateTicketRequest {
   agentId: number;
 }
 
+// Define the sales record update request type
+interface UpdateSalesRecordRequest {
+  ticketId: number;
+  amount?: number;
+  soldBy?: number;
+}
+
 export const APIRoute = createAPIFileRoute('/api/ticket')({
   POST: async ({ request }) => {
     try {
@@ -130,4 +137,120 @@ export const APIRoute = createAPIFileRoute('/api/ticket')({
       }, { status: 500 });
     }
   },
+
+  // Add a PUT method to update sales records
+  PUT: async ({ request }) => {
+    try {
+      // Parse the request body
+      const body = await request.json() as UpdateSalesRecordRequest;
+      
+      console.log('Update sales record request:', body); // Debug log
+      
+      // Validate required fields
+      if (!body.ticketId) {
+        return json({ 
+          success: false, 
+          message: 'Missing ticketId field' 
+        }, { status: 400 });
+      }
+      
+      // Check if ticket exists
+      const ticket = await db.query.tickets.findFirst({
+        where: eq(tickets.id, body.ticketId)
+      });
+      
+      if (!ticket) {
+        return json({ 
+          success: false, 
+          message: 'Ticket not found' 
+        }, { status: 404 });
+      }
+      
+      // Check if sales record exists for this ticket
+      const existingSalesRecord = await db.query.salesRecords.findFirst({
+        where: eq(salesRecords.ticketId, body.ticketId)
+      });
+      
+      if (!existingSalesRecord) {
+        // If no sales record exists, we need to create one
+        // First, get the bus trip to determine price if amount not provided
+        const busTrip = await db.query.busTrips.findFirst({
+          where: eq(busTrips.id, ticket.busTripId)
+        });
+        
+        if (!busTrip) {
+          return json({ 
+            success: false, 
+            message: 'Bus trip not found for this ticket' 
+          }, { status: 404 });
+        }
+        
+        const newSalesRecord = {
+          ticketId: body.ticketId,
+          amount: body.amount || busTrip.price,
+          soldBy: body.soldBy || ticket.soldBy
+        };
+        
+        // Create the sales record
+        await db.insert(salesRecords).values(newSalesRecord);
+        
+        // Update the ticket payment status
+        await db.update(tickets)
+          .set({ 
+            isPaid: true,
+            paymentMethod: ticket.paymentMethod || 'Cash'
+          })
+          .where(eq(tickets.id, body.ticketId));
+        
+        return json({ 
+          success: true, 
+          message: 'Sales record created successfully' 
+        }, { status: 201 });
+      } else {
+        // If sales record exists, update it
+        const updateData: Partial<typeof salesRecords.$inferInsert> = {};
+        
+        // Only update fields that are provided
+        if (body.amount !== undefined) {
+          updateData.amount = body.amount;
+        }
+        
+        if (body.soldBy !== undefined) {
+          // Verify the agent exists if changing the agent
+          const agent = await db.query.agents.findFirst({
+            where: eq(agents.id, body.soldBy)
+          });
+          
+          if (!agent) {
+            return json({ 
+              success: false, 
+              message: 'Agent not found' 
+            }, { status: 404 });
+          }
+          
+          updateData.soldBy = body.soldBy;
+        }
+        
+        // Only perform update if there are fields to update
+        if (Object.keys(updateData).length > 0) {
+          await db.update(salesRecords)
+            .set(updateData)
+            .where(eq(salesRecords.ticketId, body.ticketId));
+        }
+        
+        return json({ 
+          success: true, 
+          message: 'Sales record updated successfully' 
+        }, { status: 200 });
+      }
+      
+    } catch (error) {
+      console.error('Error updating sales record:', error);
+      return json({ 
+        success: false, 
+        message: 'Failed to update sales record',
+        error: error instanceof Error ? error.message : String(error)
+      }, { status: 500 });
+    }
+  }
 });
