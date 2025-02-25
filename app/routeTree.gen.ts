@@ -17,6 +17,7 @@ import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 import { Route as TripsTripIdImport } from './routes/trips.$tripId'
 import { Route as TicketsTicketIdImport } from './routes/tickets.$ticketId'
+import { Route as AgentAgentIdImport } from './routes/agent.$agentId'
 
 // Create/Update Routes
 
@@ -55,6 +56,12 @@ const TicketsTicketIdRoute = TicketsTicketIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AgentAgentIdRoute = AgentAgentIdImport.update({
+  id: '/agent/$agentId',
+  path: '/agent/$agentId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -85,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
+    '/agent/$agentId': {
+      id: '/agent/$agentId'
+      path: '/agent/$agentId'
+      fullPath: '/agent/$agentId'
+      preLoaderRoute: typeof AgentAgentIdImport
       parentRoute: typeof rootRoute
     }
     '/tickets/$ticketId': {
@@ -121,6 +135,7 @@ export interface FileRoutesByFullPath {
   '': typeof LayoutRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
+  '/agent/$agentId': typeof AgentAgentIdRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
@@ -130,6 +145,7 @@ export interface FileRoutesByTo {
   '': typeof LayoutRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
+  '/agent/$agentId': typeof AgentAgentIdRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
@@ -140,6 +156,7 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
+  '/agent/$agentId': typeof AgentAgentIdRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
@@ -151,16 +168,25 @@ export interface FileRouteTypes {
     | ''
     | '/login'
     | '/trips'
+    | '/agent/$agentId'
     | '/tickets/$ticketId'
     | '/trips/$tripId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/trips'
+    | '/agent/$agentId'
+    | '/tickets/$ticketId'
+    | '/trips/$tripId'
   id:
     | '__root__'
     | '/'
     | '/_layout'
     | '/login'
     | '/trips'
+    | '/agent/$agentId'
     | '/tickets/$ticketId'
     | '/trips/$tripId'
   fileRoutesById: FileRoutesById
@@ -171,6 +197,7 @@ export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRoute
   LoginRoute: typeof LoginRoute
   TripsRoute: typeof TripsRouteWithChildren
+  AgentAgentIdRoute: typeof AgentAgentIdRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
 }
 
@@ -179,6 +206,7 @@ const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRoute,
   LoginRoute: LoginRoute,
   TripsRoute: TripsRouteWithChildren,
+  AgentAgentIdRoute: AgentAgentIdRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
 }
 
@@ -196,6 +224,7 @@ export const routeTree = rootRoute
         "/_layout",
         "/login",
         "/trips",
+        "/agent/$agentId",
         "/tickets/$ticketId"
       ]
     },
@@ -213,6 +242,9 @@ export const routeTree = rootRoute
       "children": [
         "/trips/$tripId"
       ]
+    },
+    "/agent/$agentId": {
+      "filePath": "agent.$agentId.tsx"
     },
     "/tickets/$ticketId": {
       "filePath": "tickets.$ticketId.tsx"

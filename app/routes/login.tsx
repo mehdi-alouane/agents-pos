@@ -48,7 +48,7 @@ function LoginPage() {
       console.log("Login successful:", data)
 
       // Redirect to dashboard or home page
-      navigate({ to: "/" })
+      navigate({ to: "/agent/$agentId", params: { agentId: data.agent.id } })
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during login")
     } finally {

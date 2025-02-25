@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { db } from '../../../../db';
 import { agents } from '../../../../db/schema';
 import { eq } from 'drizzle-orm';
+import * as jose from 'jose'
 
 export const APIRoute = createAPIFileRoute('/api/auth/login')({
     POST: async ({ request }) => {
@@ -24,9 +25,16 @@ export const APIRoute = createAPIFileRoute('/api/auth/login')({
                 return json({ success: false, error: 'Invalid credentials' }, { status: 401 });
             }
 
+            const token = await new jose.SignJWT({ email: agent[0].email })
+                .setProtectedHeader({ alg: 'HS256' })
+                .setIssuedAt()
+                .setExpirationTime(Math.floor(Date.now() / 1000) + 24 * 60 * 60)
+                .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+
             return json({
                 success: true,
                 message: 'Login successful',
+                token,
                 agent: { id: agent[0].id, name: agent[0].name, email: agent[0].email }
             });
         } catch (error) {
