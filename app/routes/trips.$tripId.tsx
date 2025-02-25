@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { DEPLOY_URL } from "../utils/users"
 import axios from "redaxios"
 import { format, parseISO } from "date-fns"
@@ -14,8 +14,8 @@ import { Label } from "../components/ui/label"
 import { Check } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Switch } from "../components/ui/switch"
-import { toast } from "sonner"
 import { Toaster } from "../components/ui/sonner"
+import { toast } from "sonner"
 
 // Define the trip type
 interface Trip {
@@ -70,6 +70,7 @@ export const Route = createFileRoute("/trips/$tripId")({
 
 function TripDetail() {
   const trip = Route.useLoaderData()
+  const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   // const { toast } = useToast()
@@ -135,7 +136,7 @@ function TripDetail() {
     }))
   }
 
-  // Update the handleBooking function to use the API endpoint
+  // Update the handleBooking function to use the API endpoint and redirect on success
   const handleBooking = async () => {
     try {
       setIsSubmitting(true)
@@ -165,15 +166,43 @@ function TripDetail() {
       setIsModalOpen(false)
 
       // Show success toast
-      toast("Booking Successful",{
-        description: `Seat ${finalBookingData.seatNumber} has been booked for ${finalBookingData.passengerName}.`
+      toast({
+        title: "Booking Successful",
+        description: "Redirecting to your ticket...",
+        variant: "default",
       })
+
+      // Redirect to the ticket page with the ticket data
+      // In a real app, you would use the ticket ID from the response
+      const ticketId = response.data?.id || "new"
+
+      // Store ticket data in sessionStorage for the ticket page to access
+      sessionStorage.setItem(
+        "ticketData",
+        JSON.stringify({
+          ...finalBookingData,
+          trip: {
+            departureCity: trip.departureCity,
+            destinationCity: trip.destinationCity,
+            departureDate: trip.departureDate,
+            price: trip.price,
+          },
+          ticketId: ticketId,
+          bookingDate: new Date().toISOString(),
+          agent: agents.find((agent) => agent.id === Number(finalBookingData.agentId))?.name,
+        }),
+      )
+
+      // Redirect to the ticket page
+      navigate({ to: `/tickets/${ticketId}` })
     } catch (error) {
       console.error("Booking failed:", error)
 
       // Show error toast
-      toast("Booking Failed", {
-        description: "There was an error booking your ticket. Please try again."
+      toast({
+        title: "Booking Failed",
+        description: "There was an error booking your ticket. Please try again.",
+        variant: "destructive",
       })
     } finally {
       setIsSubmitting(false)

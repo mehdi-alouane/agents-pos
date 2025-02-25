@@ -15,6 +15,7 @@ import { Route as TripsImport } from './routes/trips'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 import { Route as TripsTripIdImport } from './routes/trips.$tripId'
+import { Route as TicketsTicketIdImport } from './routes/tickets.$ticketId'
 
 // Create/Update Routes
 
@@ -41,6 +42,12 @@ const TripsTripIdRoute = TripsTripIdImport.update({
   getParentRoute: () => TripsRoute,
 } as any)
 
+const TicketsTicketIdRoute = TicketsTicketIdImport.update({
+  id: '/tickets/$ticketId',
+  path: '/tickets/$ticketId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -64,6 +71,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
+    '/tickets/$ticketId': {
+      id: '/tickets/$ticketId'
+      path: '/tickets/$ticketId'
+      fullPath: '/tickets/$ticketId'
+      preLoaderRoute: typeof TicketsTicketIdImport
       parentRoute: typeof rootRoute
     }
     '/trips/$tripId': {
@@ -92,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
   '/trips': typeof TripsRouteWithChildren
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
 
@@ -99,6 +114,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
   '/trips': typeof TripsRouteWithChildren
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
 
@@ -107,15 +123,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
   '/trips': typeof TripsRouteWithChildren
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/trips/$tripId': typeof TripsTripIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/trips' | '/trips/$tripId'
+  fullPaths: '/' | '' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/trips' | '/trips/$tripId'
-  id: '__root__' | '/' | '/_layout' | '/trips' | '/trips/$tripId'
+  to: '/' | '' | '/trips' | '/tickets/$ticketId' | '/trips/$tripId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_layout'
+    | '/trips'
+    | '/tickets/$ticketId'
+    | '/trips/$tripId'
   fileRoutesById: FileRoutesById
 }
 
@@ -123,12 +146,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
   TripsRoute: typeof TripsRouteWithChildren
+  TicketsTicketIdRoute: typeof TicketsTicketIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
   TripsRoute: TripsRouteWithChildren,
+  TicketsTicketIdRoute: TicketsTicketIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -143,7 +168,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_layout",
-        "/trips"
+        "/trips",
+        "/tickets/$ticketId"
       ]
     },
     "/": {
@@ -157,6 +183,9 @@ export const routeTree = rootRoute
       "children": [
         "/trips/$tripId"
       ]
+    },
+    "/tickets/$ticketId": {
+      "filePath": "tickets.$ticketId.tsx"
     },
     "/trips/$tripId": {
       "filePath": "trips.$tripId.tsx",
