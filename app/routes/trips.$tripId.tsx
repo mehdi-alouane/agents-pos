@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { DEPLOY_URL } from "../utils/users"
 import axios from "redaxios"
 import { format, parseISO } from "date-fns"
@@ -105,7 +105,12 @@ function TripDetail() {
             Book This Trip
           </button>
           <button className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">
+            <Link
+              to="/trips"
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
+            >
             Back to Trips
+            </Link>
           </button>
         </div>
       </div>

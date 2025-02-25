@@ -11,18 +11,12 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as UsersImport } from './routes/users'
 import { Route as TripsImport } from './routes/trips'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
+import { Route as TripsTripIdImport } from './routes/trips.$tripId'
 
 // Create/Update Routes
-
-const UsersRoute = UsersImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const TripsRoute = TripsImport.update({
   id: '/trips',
@@ -39,6 +33,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const TripsTripIdRoute = TripsTripIdImport.update({
+  id: '/$tripId',
+  path: '/$tripId',
+  getParentRoute: () => TripsRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -66,61 +66,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsImport
       parentRoute: typeof rootRoute
     }
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersImport
-      parentRoute: typeof rootRoute
+    '/trips/$tripId': {
+      id: '/trips/$tripId'
+      path: '/$tripId'
+      fullPath: '/trips/$tripId'
+      preLoaderRoute: typeof TripsTripIdImport
+      parentRoute: typeof TripsImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface TripsRouteChildren {
+  TripsTripIdRoute: typeof TripsTripIdRoute
+}
+
+const TripsRouteChildren: TripsRouteChildren = {
+  TripsTripIdRoute: TripsTripIdRoute,
+}
+
+const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
-  '/trips': typeof TripsRoute
-  '/users': typeof UsersRoute
+  '/trips': typeof TripsRouteWithChildren
+  '/trips/$tripId': typeof TripsTripIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
-  '/trips': typeof TripsRoute
-  '/users': typeof UsersRoute
+  '/trips': typeof TripsRouteWithChildren
+  '/trips/$tripId': typeof TripsTripIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
-  '/trips': typeof TripsRoute
-  '/users': typeof UsersRoute
+  '/trips': typeof TripsRouteWithChildren
+  '/trips/$tripId': typeof TripsTripIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/trips' | '/users'
+  fullPaths: '/' | '' | '/trips' | '/trips/$tripId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/trips' | '/users'
-  id: '__root__' | '/' | '/_layout' | '/trips' | '/users'
+  to: '/' | '' | '/trips' | '/trips/$tripId'
+  id: '__root__' | '/' | '/_layout' | '/trips' | '/trips/$tripId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
-  TripsRoute: typeof TripsRoute
-  UsersRoute: typeof UsersRoute
+  TripsRoute: typeof TripsRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
-  TripsRoute: TripsRoute,
-  UsersRoute: UsersRoute,
+  TripsRoute: TripsRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -135,8 +143,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_layout",
-        "/trips",
-        "/users"
+        "/trips"
       ]
     },
     "/": {
@@ -146,10 +153,14 @@ export const routeTree = rootRoute
       "filePath": "_layout.tsx"
     },
     "/trips": {
-      "filePath": "trips.tsx"
+      "filePath": "trips.tsx",
+      "children": [
+        "/trips/$tripId"
+      ]
     },
-    "/users": {
-      "filePath": "users.tsx"
+    "/trips/$tripId": {
+      "filePath": "trips.$tripId.tsx",
+      "parent": "/trips"
     }
   }
 }
