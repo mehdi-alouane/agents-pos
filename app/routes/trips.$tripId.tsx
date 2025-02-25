@@ -6,12 +6,12 @@ import { format, parseISO } from "date-fns"
 // Define the trip type
 interface Trip {
   id: number
-  departure_city: string
-  destination_city: string
-  departure_date: string
+  departureCity: string
+  destinationCity: string
+  departureDate: string
   price: number
-  created_by: number
-  created_at: string
+  createdBy: number
+  createdAt: string
 }
 
 export const Route = createFileRoute("/trips/$tripId")({
@@ -62,16 +62,16 @@ function TripDetail() {
             <div className="flex flex-col space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">From:</span>
-                <span className="font-medium">{trip.departure_city}</span>
+                <span className="font-medium">{trip.departureCity}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">To:</span>
-                <span className="font-medium">{trip.destination_city}</span>
+                <span className="font-medium">{trip.destinationCity}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Departure:</span>
                 <span className="font-medium">
-                  {formatDate(trip.departure_date, "PPP 'at' p")}
+                  {formatDate(trip.departureDate, "PPP 'at' p")}
                 </span>
               </div>
             </div>
@@ -88,12 +88,12 @@ function TripDetail() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Created by:</span>
-                <span className="font-medium">User #{trip.created_by}</span>
+                <span className="font-medium">User #{trip.createdBy}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Added on:</span>
                 <span className="font-medium">
-                  {formatDate(trip.created_at, "PPP")}
+                  {formatDate(trip.createdAt, "PPP")}
                 </span>
               </div>
             </div>
