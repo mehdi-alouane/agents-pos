@@ -1,3 +1,7 @@
+"use client"
+
+import type React from "react"
+
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { DEPLOY_URL } from "../utils/users"
 import axios from "redaxios"
@@ -10,6 +14,8 @@ import { Label } from "../components/ui/label"
 import { Check } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Switch } from "../components/ui/switch"
+import { toast } from "sonner"
+import { Toaster } from "../components/ui/sonner"
 
 // Define the trip type
 interface Trip {
@@ -65,6 +71,9 @@ export const Route = createFileRoute("/trips/$tripId")({
 function TripDetail() {
   const trip = Route.useLoaderData()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  // const { toast } = useToast()
+
   const [bookingData, setBookingData] = useState<BookingData>({
     busTripId: trip?.id || 0,
     seatNumber: null,
@@ -129,6 +138,8 @@ function TripDetail() {
   // Update the handleBooking function to use the API endpoint
   const handleBooking = async () => {
     try {
+      setIsSubmitting(true)
+
       // Convert agentId from string to number if needed
       const finalBookingData = {
         ...bookingData,
@@ -153,11 +164,19 @@ function TripDetail() {
       })
       setIsModalOpen(false)
 
-      // Show success message
-      // alert("Ticket booked successfully!")
+      // Show success toast
+      toast("Booking Successful",{
+        description: `Seat ${finalBookingData.seatNumber} has been booked for ${finalBookingData.passengerName}.`
+      })
     } catch (error) {
       console.error("Booking failed:", error)
-      // alert("Failed to book ticket. Please try again.")
+
+      // Show error toast
+      toast("Booking Failed", {
+        description: "There was an error booking your ticket. Please try again."
+      })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -169,6 +188,7 @@ function TripDetail() {
 
   return (
     <div className="container mx-auto p-4">
+      <Toaster />
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Trip Details</h1>
@@ -357,8 +377,12 @@ function TripDetail() {
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleBooking} disabled={!isFormValid} className="bg-blue-600 hover:bg-blue-700">
-              Confirm Booking
+            <Button
+              onClick={handleBooking}
+              disabled={!isFormValid || isSubmitting}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {isSubmitting ? "Processing..." : "Confirm Booking"}
             </Button>
           </DialogFooter>
         </DialogContent>
