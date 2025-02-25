@@ -174,7 +174,7 @@ function TripDetail() {
 
       // Redirect to the ticket page with the ticket data
       // In a real app, you would use the ticket ID from the response
-      const ticketId = response.data?.id || "new"
+      const ticketId = response.data?.tickets?.id || "new"
 
       // Store ticket data in sessionStorage for the ticket page to access
       sessionStorage.setItem(

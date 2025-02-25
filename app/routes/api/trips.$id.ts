@@ -1,7 +1,7 @@
 import { json } from '@tanstack/start'
 import { createAPIFileRoute } from '@tanstack/start/api'
 import { db } from '../../../db'
-import { busTrips } from '../../../db/schema'
+import { busTrips, tickets } from '../../../db/schema'
 import { eq } from 'drizzle-orm'
 
 export const APIRoute = createAPIFileRoute('/api/trips/$id')({
@@ -30,10 +30,21 @@ export const APIRoute = createAPIFileRoute('/api/trips/$id')({
         }, { status: 404 })
       }
       
-      // Return the trip data as JSON
+      // Query tickets associated with this trip
+      const tripTickets = await db
+        .select({
+          id: tickets.id
+        })
+        .from(tickets)
+        .where(eq(tickets.busTripId, tripId))
+      
+      // Return the trip data along with tickets as JSON
       return json({ 
         success: true,
-        data: trip[0]
+        data: {
+          ...trip[0],
+          tickets: tripTickets
+        }
       })
     } catch (error) {
       // Handle any errors
