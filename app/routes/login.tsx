@@ -47,6 +47,9 @@ function LoginPage() {
       const data = await response.json()
       console.log("Login successful:", data)
 
+      // save token to local storage
+      localStorage.setItem("token", data.token)
+
       // Redirect to dashboard or home page
       navigate({ to: "/agent/$agentId", params: { agentId: data.agent.id } })
     } catch (err) {

@@ -96,12 +96,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             Trips
           </Link>{' '}
           <Link
-            to="/agent"
+            to="/login"
             activeProps={{
               className: 'font-bold',
             }}
           >
-            Agent
+            Login
           </Link>{' '}
           <Link
             to="/admin"
@@ -109,7 +109,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               className: 'font-bold',
             }}
           >
-            Admin
+            Admin Sales
+          </Link>{' '}
+          <Link
+            to="/bus-trip"
+            activeProps={{
+              className: 'font-bold',
+            }}
+          >
+            Add new bus trip
           </Link>{' '}
      
         </div>

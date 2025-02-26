@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as TripsImport } from './routes/trips'
 import { Route as LoginImport } from './routes/login'
+import { Route as BusTripImport } from './routes/bus-trip'
 import { Route as AdminImport } from './routes/admin'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
@@ -31,6 +32,12 @@ const TripsRoute = TripsImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BusTripRoute = BusTripImport.update({
+  id: '/bus-trip',
+  path: '/bus-trip',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -94,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminImport
       parentRoute: typeof rootRoute
     }
+    '/bus-trip': {
+      id: '/bus-trip'
+      path: '/bus-trip'
+      fullPath: '/bus-trip'
+      preLoaderRoute: typeof BusTripImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -148,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
   '/admin': typeof AdminRoute
+  '/bus-trip': typeof BusTripRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -159,6 +174,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
   '/admin': typeof AdminRoute
+  '/bus-trip': typeof BusTripRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -171,6 +187,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
   '/admin': typeof AdminRoute
+  '/bus-trip': typeof BusTripRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -184,6 +201,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/admin'
+    | '/bus-trip'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -194,6 +212,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/admin'
+    | '/bus-trip'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -204,6 +223,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_layout'
     | '/admin'
+    | '/bus-trip'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -216,6 +236,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
   AdminRoute: typeof AdminRoute
+  BusTripRoute: typeof BusTripRoute
   LoginRoute: typeof LoginRoute
   TripsRoute: typeof TripsRouteWithChildren
   AgentAgentIdRoute: typeof AgentAgentIdRoute
@@ -226,6 +247,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
   AdminRoute: AdminRoute,
+  BusTripRoute: BusTripRoute,
   LoginRoute: LoginRoute,
   TripsRoute: TripsRouteWithChildren,
   AgentAgentIdRoute: AgentAgentIdRoute,
@@ -245,6 +267,7 @@ export const routeTree = rootRoute
         "/",
         "/_layout",
         "/admin",
+        "/bus-trip",
         "/login",
         "/trips",
         "/agent/$agentId",
@@ -259,6 +282,9 @@ export const routeTree = rootRoute
     },
     "/admin": {
       "filePath": "admin.tsx"
+    },
+    "/bus-trip": {
+      "filePath": "bus-trip.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
