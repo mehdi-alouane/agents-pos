@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as TripsImport } from './routes/trips'
 import { Route as LoginImport } from './routes/login'
+import { Route as AdminImport } from './routes/admin'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
 import { Route as TripsTripIdImport } from './routes/trips.$tripId'
@@ -30,6 +31,12 @@ const TripsRoute = TripsImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AdminRoute = AdminImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -78,6 +85,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof LayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -133,6 +147,7 @@ const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -143,6 +158,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof LayoutRoute
+  '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -154,6 +170,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRoute
+  '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
   '/trips': typeof TripsRouteWithChildren
   '/agent/$agentId': typeof AgentAgentIdRoute
@@ -166,6 +183,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/admin'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -175,6 +193,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
+    | '/admin'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -184,6 +203,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_layout'
+    | '/admin'
     | '/login'
     | '/trips'
     | '/agent/$agentId'
@@ -195,6 +215,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRoute
+  AdminRoute: typeof AdminRoute
   LoginRoute: typeof LoginRoute
   TripsRoute: typeof TripsRouteWithChildren
   AgentAgentIdRoute: typeof AgentAgentIdRoute
@@ -204,6 +225,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRoute,
+  AdminRoute: AdminRoute,
   LoginRoute: LoginRoute,
   TripsRoute: TripsRouteWithChildren,
   AgentAgentIdRoute: AgentAgentIdRoute,
@@ -222,6 +244,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_layout",
+        "/admin",
         "/login",
         "/trips",
         "/agent/$agentId",
@@ -233,6 +256,9 @@ export const routeTree = rootRoute
     },
     "/_layout": {
       "filePath": "_layout.tsx"
+    },
+    "/admin": {
+      "filePath": "admin.tsx"
     },
     "/login": {
       "filePath": "login.tsx"

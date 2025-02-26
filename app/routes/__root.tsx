@@ -103,6 +103,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           >
             Agent
           </Link>{' '}
+          <Link
+            to="/admin"
+            activeProps={{
+              className: 'font-bold',
+            }}
+          >
+            Admin
+          </Link>{' '}
      
         </div>
         <hr />
